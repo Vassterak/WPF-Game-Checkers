@@ -13,7 +13,7 @@ namespace WPF_Game_Checkers
     class Checkers
     {
         //default values
-        private int xSize = 8, ySize = 8;
+        private int xSize = 8, ySize = 8, numOfStoneRows = 2;
 
         public int XSize
         {
@@ -24,6 +24,12 @@ namespace WPF_Game_Checkers
         {
             get { return ySize; }
             set { ySize = value; }
+        }
+
+        public int NumOfStoneRows
+        {
+            get { return numOfStoneRows; }
+            set { numOfStoneRows = value; }
         }
     }
 }

@@ -47,16 +47,13 @@ namespace WPF_Game_Checkers
             {
                 for (int x = 0; x < damaGame.XSize; x++)
                 {
-                    Rectangle rectangle = new Rectangle {Fill = oddRectangle ? Brushes.White : Brushes.SaddleBrown};
+                    Rectangle rectangle = new Rectangle {Fill = oddRectangle ? Brushes.LightGray : Brushes.SaddleBrown};
 
                     rectangle.SetValue(Grid.RowProperty, y);
                     rectangle.SetValue(Grid.ColumnProperty, x);
                     gameGrid.Children.Add(rectangle);
 
-                    //Creating the checkboard pattern
-                    oddRectangle = !oddRectangle;
-                    if (x == damaGame.XSize - 1 && damaGame.XSize % 2 == 0) //only true when x(rows) are even
-                        oddRectangle = !oddRectangle;
+                    oddRectangle = OddChecker(oddRectangle, x); //Creating the checkboard pattern
                 }
             }
         }
@@ -86,17 +83,61 @@ namespace WPF_Game_Checkers
         private void ClearGameBoard()
         {
             gameGrid.Children.Clear();
+            gameGrid.RowDefinitions.Clear();
+            gameGrid.ColumnDefinitions.Clear();
         }
 
-        private void ButtonVykresli_Click(object sender, RoutedEventArgs e)
+        private void RenderStones(int numOfStonesRows)
+        {
+            bool blackPlane = false, player2render = false;
+
+            for (int y = 0; y < damaGame.YSize; y++)
+            {
+                for (int x = 0; x < damaGame.XSize; x++)
+                {
+                    if (blackPlane)
+                    {
+                        if (y < numOfStonesRows)
+                        {
+                            Ellipse playerStone = new Ellipse { Fill = Brushes.White, Margin = new Thickness(10) };
+                            playerStone.SetValue(Grid.RowProperty, y);
+                            playerStone.SetValue(Grid.ColumnProperty, x);
+                            gameGrid.Children.Add(playerStone);
+                        }
+                        else
+                        {
+                            if (!player2render)
+                            {
+                                y = damaGame.YSize - numOfStonesRows;
+                                player2render = true;
+                            }
+
+                            Ellipse playerStone = new Ellipse { Fill = Brushes.Black, Margin = new Thickness(10) };
+                            playerStone.SetValue(Grid.RowProperty, y);
+                            playerStone.SetValue(Grid.ColumnProperty, x);
+                            gameGrid.Children.Add(playerStone);
+                        }
+                    }
+
+                    blackPlane = OddChecker(blackPlane, x);
+                }
+            }
+        }
+
+        private void ButtonNewGame_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                damaGame.XSize = int.Parse(textBoxSirka.Text);
-                damaGame.YSize = int.Parse(textBoxVyska.Text);
+                //Clear everything
+                ClearGameBoard();
+
+                damaGame.XSize = int.Parse(textBoxWidth.Text);
+                damaGame.YSize = int.Parse(textBoxHeight.Text);
+                damaGame.NumOfStoneRows = int.Parse(textBoxNumStoneRows.Text);
 
                 CreateGameGrid();
                 RenderCheckeredBackground();
+                RenderStones(damaGame.NumOfStoneRows);
             }
 
             catch (Exception)
@@ -104,11 +145,15 @@ namespace WPF_Game_Checkers
                 //Message that says: Only enter valid values!
                 MessageBox.Show("Zadej pouze platné hodnoty!");
             }
-}
+        }
 
-        private void ButtonVymaz_Click(object sender, RoutedEventArgs e)
+        private bool OddChecker(bool oddRectangle, int x)
         {
-            ClearGameBoard();
+            oddRectangle = !oddRectangle;
+            if (x == damaGame.XSize - 1 && damaGame.XSize % 2 == 0) //only true when x(rows) are even
+                oddRectangle = !oddRectangle;
+
+            return oddRectangle;
         }
     }
 }
