@@ -21,7 +21,6 @@ namespace WPF_Game_Checkers
         public MainWindow()
         {
             InitializeComponent();
-            damaGame.RenderBackground(gameCanvas);
         }
 
         private void ButtonVykresli_Click(object sender, RoutedEventArgs e)
@@ -30,11 +29,11 @@ namespace WPF_Game_Checkers
             {
                 damaGame.XSize = int.Parse(textBoxSirka.Text);
                 damaGame.YSize = int.Parse(textBoxVyska.Text);
-
                 ClearGameBoard();
 
                 damaGame.RenderBackground(gameCanvas);
                 CreteGridForBoard();
+                AddNumbersToGrid();
             }
             catch (Exception)
             {
@@ -58,18 +57,28 @@ namespace WPF_Game_Checkers
             }
         }
 
-        private void AddNumberToGrid()
+        private void AddNumbersToGrid()
         {
-            Label laber = new Label
+            int numOfRects = 0;
+            for (int y = 0; y < damaGame.YSize; y++)
             {
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-                Content = x.ToString(),
-                FontSize = 20
-            };
-            laber.SetValue(Grid.RowProperty, x);
-            laber.SetValue(Grid.ColumnProperty, 0);
-            gameFiledGrid.Children.Add(laber);
+                for (int x = 0; x < damaGame.XSize; x++)
+                {
+                    numOfRects++;
+
+                    Label laber = new Label
+                    {
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center,
+                        Content = numOfRects.ToString(),
+                        FontSize = 20
+                    };
+
+                    laber.SetValue(Grid.RowProperty, y);
+                    laber.SetValue(Grid.ColumnProperty, x);
+                    gameFiledGrid.Children.Add(laber);
+                }
+            }
         }
 
         private void ClearGameBoard()
