@@ -19,7 +19,7 @@
         </Grid.ColumnDefinitions>
 
         <Border x:Name="canvasBorder" BorderBrush="Black" BorderThickness="2" >
-            <Grid x:Name="gameFiledGrid" x:FieldModifier="public">
+            <Grid x:Name="gameGrid" x:FieldModifier="public">
             </Grid>
         </Border>
 

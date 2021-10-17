@@ -23,62 +23,35 @@ namespace WPF_Game_Checkers
             InitializeComponent();
         }
 
-        private void CreteGridForBoard()
+        //Crete grid for the game content.
+        private void CreateGameGrid()
         {
             for (int y = 0; y < damaGame.YSize; y++)
             {
                 RowDefinition row = new RowDefinition();
-                gameFiledGrid.RowDefinitions.Add(row);
+                gameGrid.RowDefinitions.Add(row);
             }
 
             for (int x = 0; x < damaGame.XSize; x++)
             {
                 ColumnDefinition colum = new ColumnDefinition();
-                gameFiledGrid.ColumnDefinitions.Add(colum);
-            }
-        }
-        private void RenderBackground()
-        {
-            for (int y = 0; y < damaGame.YSize; y++)
-            {
-                for (int x = 0; x < damaGame.XSize; x++)
-                {
-
-                }
+                gameGrid.ColumnDefinitions.Add(colum);
             }
         }
 
-        private void AddNumbersToGrid()
+        private void RenderCheckeredBackground()
         {
-            int numOfRects = 0;
             bool oddRectangle = true;
 
             for (int y = 0; y < damaGame.YSize; y++)
             {
                 for (int x = 0; x < damaGame.XSize; x++)
                 {
-                    numOfRects++;
-
-                    Rectangle rectangle = new Rectangle
-                    {
-                        Fill = oddRectangle ? Brushes.White : Brushes.SaddleBrown
-                    };
-
-                    Label laber = new Label
-                    {
-                        HorizontalAlignment = HorizontalAlignment.Center,
-                        VerticalAlignment = VerticalAlignment.Center,
-                        Content = numOfRects.ToString(),
-                        FontSize = 20
-                    };
+                    Rectangle rectangle = new Rectangle {Fill = oddRectangle ? Brushes.White : Brushes.SaddleBrown};
 
                     rectangle.SetValue(Grid.RowProperty, y);
                     rectangle.SetValue(Grid.ColumnProperty, x);
-                    gameFiledGrid.Children.Add(rectangle);
-
-                    laber.SetValue(Grid.RowProperty, y);
-                    laber.SetValue(Grid.ColumnProperty, x);
-                    gameFiledGrid.Children.Add(laber);
+                    gameGrid.Children.Add(rectangle);
 
                     //Creating the checkboard pattern
                     oddRectangle = !oddRectangle;
@@ -88,10 +61,31 @@ namespace WPF_Game_Checkers
             }
         }
 
+        private void RenderDebugText()
+        {
+            int numOfRects = 0;
+            for (int y = 0; y < damaGame.YSize; y++)
+            {
+                for (int x = 0; x < damaGame.XSize; x++)
+                {
+                    Label laber = new Label
+                    {
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center,
+                        Content = numOfRects.ToString(),
+                        FontSize = 20
+                    };
+
+                    laber.SetValue(Grid.RowProperty, y);
+                    laber.SetValue(Grid.ColumnProperty, x);
+                    gameGrid.Children.Add(laber);
+                }
+            }
+        }
+
         private void ClearGameBoard()
         {
-            gameFiledGrid.RowDefinitions.Clear();
-            gameFiledGrid.ColumnDefinitions.Clear();
+            gameGrid.Children.Clear();
         }
 
         private void ButtonVykresli_Click(object sender, RoutedEventArgs e)
@@ -100,8 +94,9 @@ namespace WPF_Game_Checkers
             {
                 damaGame.XSize = int.Parse(textBoxSirka.Text);
                 damaGame.YSize = int.Parse(textBoxVyska.Text);
-                CreteGridForBoard();
-                AddNumbersToGrid();
+
+                CreateGameGrid();
+                RenderCheckeredBackground();
             }
 
             catch (Exception)
