@@ -20,7 +20,6 @@
 
         <Border x:Name="canvasBorder" BorderBrush="Black" BorderThickness="2" >
             <Grid x:Name="gameFiledGrid" x:FieldModifier="public">
-                <Canvas x:Name="gameCanvas" Grid.Column="0" Background="Gray"/>
             </Grid>
         </Border>
 
@@ -46,7 +45,8 @@
 
             <Label Content="Label" HorizontalAlignment="Center" Grid.Row="2" Grid.ColumnSpan="2" VerticalAlignment="Top"/>
 
-            <Button x:Name="ButtonVykresli" Content="Vykresli znovu" Height="30" Grid.Row="6" VerticalAlignment="Center" Margin="50,0,50,0" Click="ButtonVykresli_Click" Grid.ColumnSpan="2"/>
+            <Button x:Name="ButtonVykresli" Content="Vykresli znovu" Height="30" Grid.Row="6" VerticalAlignment="Center" Margin="50,0,50,0" Click="ButtonVykresli_Click"/>
+            <Button x:Name="ButtonVymaz" Content="Vymaz" Height="30" Grid.Row="6" VerticalAlignment="Center" Margin="50,0,50,0" Click="ButtonVymaz_Click" Grid.Column="1"/>
         </Grid>
     </Grid>
 </Window>
