@@ -95,16 +95,19 @@ namespace WPF_Game_Checkers
             {
                 for (int x = 0; x < damaGame.XSize; x++)
                 {
+                    //Render stones only on brown spots
                     if (blackPlane)
                     {
-                        if (y < numOfStonesRows)
+                        if (y < numOfStonesRows) //render for player 1 (at top)
                         {
-                            Ellipse playerStone = new Ellipse { Fill = Brushes.White, Margin = new Thickness(10) };
+                            Ellipse playerStone = new Ellipse { Fill = Brushes.White, Margin = new Thickness(10)};
                             playerStone.SetValue(Grid.RowProperty, y);
                             playerStone.SetValue(Grid.ColumnProperty, x);
+                            playerStone.Style = (Style)FindResource("playerStyle"); //Apply style with event handler
                             gameGrid.Children.Add(playerStone);
                         }
-                        else
+
+                        else //render for player 2 (at bottom)
                         {
                             if (!player2render)
                             {
@@ -147,6 +150,7 @@ namespace WPF_Game_Checkers
             }
         }
 
+        //Return true only when last plate was false
         private bool OddChecker(bool oddRectangle, int x)
         {
             oddRectangle = !oddRectangle;
@@ -154,6 +158,14 @@ namespace WPF_Game_Checkers
                 oddRectangle = !oddRectangle;
 
             return oddRectangle;
+        }
+
+        private void Ellipse_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                MessageBox.Show("Event is working!");
+            }
         }
     }
 }

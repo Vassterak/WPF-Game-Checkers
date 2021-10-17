@@ -12,6 +12,13 @@
         MinHeight="450"
         WindowStartupLocation="CenterScreen">
 
+    <Window.Resources>
+        <Style x:Key="playerStyle" TargetType="Ellipse">
+            <Setter Property="Fill" Value="Aqua"/>
+            <EventSetter Event="MouseMove" Handler="Ellipse_MouseMove"/>
+        </Style>
+    </Window.Resources>
+    
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -19,7 +26,7 @@
         </Grid.ColumnDefinitions>
 
         <Border x:Name="canvasBorder" BorderBrush="Black" BorderThickness="2" >
-            <Grid x:Name="gameGrid" x:FieldModifier="public">
+            <Grid x:Name="gameGrid" x:FieldModifier="public" AllowDrop="True">
             </Grid>
         </Border>
 
