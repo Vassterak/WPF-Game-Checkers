@@ -19,6 +19,7 @@ namespace WPF_Game_Checkers
     {
         private Checkers damaGame = new Checkers();
         private List<Ellipse> players = new List<Ellipse>();
+        private int debugVar = 0;
         public MainWindow()
         {
             InitializeComponent();
@@ -86,6 +87,7 @@ namespace WPF_Game_Checkers
             gameGrid.Children.Clear();
             gameGrid.RowDefinitions.Clear();
             gameGrid.ColumnDefinitions.Clear();
+            players.Clear();
         }
 
         private void RenderStones(int numOfStonesRows)
@@ -128,7 +130,7 @@ namespace WPF_Game_Checkers
                         }
                     }
 
-                    blackPlane = OddChecker(blackPlane, x);
+                    blackPlane = OddChecker(blackPlane, x); //Set if the checkboard plane is black
                 }
             }
         }
@@ -173,13 +175,17 @@ namespace WPF_Game_Checkers
                 var element = e.OriginalSource as FrameworkElement; //getting the object from MouseMove Event
                 damaGame.playerStone = element;
                 DragDrop.DoDragDrop(element, element, DragDropEffects.Move);
+                debugVar++;
+                debugVariable.Content = debugVar.ToString();
             }
         }
 
         private void gameGrid_Drop(object sender, DragEventArgs e)
         {
-            Point dropPositiom = e.GetPosition(gameGrid);
-            gameGrid.Children.Remove(damaGame.playerStone);
+            //Point dropPositiom = e.GetPosition(gameGrid);
+            var newPosition = (UIElement)e.Source;
+            Grid.SetColumn(damaGame.playerStone, Grid.GetColumn(newPosition));
+            Grid.SetRow(damaGame.playerStone, Grid.GetRow(newPosition));
         }
 
         private void gameGrid_DragOver(object sender, DragEventArgs e)
