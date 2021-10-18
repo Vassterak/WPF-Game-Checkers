@@ -14,7 +14,6 @@
 
     <Window.Resources>
         <Style x:Key="playerStyle" TargetType="Ellipse">
-            <Setter Property="Fill" Value="Aqua"/>
             <EventSetter Event="MouseMove" Handler="Ellipse_MouseMove"/>
         </Style>
     </Window.Resources>
@@ -26,7 +25,7 @@
         </Grid.ColumnDefinitions>
 
         <Border x:Name="canvasBorder" BorderBrush="Black" BorderThickness="2" >
-            <Grid x:Name="gameGrid" x:FieldModifier="public" AllowDrop="True">
+            <Grid x:Name="gameGrid" x:FieldModifier="public" AllowDrop="True" Drop="gameGrid_Drop" DragOver="gameGrid_DragOver">
             </Grid>
         </Border>
 
@@ -55,7 +54,8 @@
 
             <Label Content="Label" HorizontalAlignment="Center" Grid.Row="3" Grid.ColumnSpan="2" VerticalAlignment="Top"/>
 
-            <Button x:Name="ButtonVykresli" Content="Nová hra" Height="30" Grid.Row="6" VerticalAlignment="Center" Margin="50,0,50,0" Grid.ColumnSpan="2" Click="ButtonNewGame_Click"/>
+            <Button x:Name="ButtonVykresli" Content="Nová hra" Height="30" Grid.Row="6" VerticalAlignment="Center" Margin="50,0,50,0" Grid.ColumnSpan="1" Click="ButtonNewGame_Click"/>
+            <Button x:Name="ButtonTest" Content="Show list" Height="30" Grid.Row="6" Grid.Column="1" VerticalAlignment="Center" Margin="50,0,50,0" Click="ButtonTest_Click"/>
         </Grid>
     </Grid>
 </Window>

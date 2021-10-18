@@ -18,6 +18,7 @@ namespace WPF_Game_Checkers
     public partial class MainWindow : Window
     {
         private Checkers damaGame = new Checkers();
+        private List<Ellipse> players = new List<Ellipse>();
         public MainWindow()
         {
             InitializeComponent();
@@ -103,8 +104,10 @@ namespace WPF_Game_Checkers
                             Ellipse playerStone = new Ellipse { Fill = Brushes.White, Margin = new Thickness(10)};
                             playerStone.SetValue(Grid.RowProperty, y);
                             playerStone.SetValue(Grid.ColumnProperty, x);
+                            playerStone.Name = $"player1_{x}_{y}";
                             playerStone.Style = (Style)FindResource("playerStyle"); //Apply style with event handler
                             gameGrid.Children.Add(playerStone);
+                            players.Add(playerStone);
                         }
 
                         else //render for player 2 (at bottom)
@@ -118,7 +121,10 @@ namespace WPF_Game_Checkers
                             Ellipse playerStone = new Ellipse { Fill = Brushes.Black, Margin = new Thickness(10) };
                             playerStone.SetValue(Grid.RowProperty, y);
                             playerStone.SetValue(Grid.ColumnProperty, x);
+                            playerStone.Name = $"player2_{x}_{y}";
+                            playerStone.Style = (Style)FindResource("playerStyle"); //Apply style with event handler
                             gameGrid.Children.Add(playerStone);
+                            players.Add(playerStone);
                         }
                     }
 
@@ -164,8 +170,31 @@ namespace WPF_Game_Checkers
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                MessageBox.Show("Event is working!");
+                var element = e.OriginalSource as FrameworkElement; //getting the object from MouseMove Event
+                damaGame.playerStone = element;
+                DragDrop.DoDragDrop(element, element, DragDropEffects.Move);
             }
+        }
+
+        private void gameGrid_Drop(object sender, DragEventArgs e)
+        {
+            Point dropPositiom = e.GetPosition(gameGrid);
+            gameGrid.Children.Remove(damaGame.playerStone);
+        }
+
+        private void gameGrid_DragOver(object sender, DragEventArgs e)
+        {
+
+        }
+
+        private void ButtonTest_Click(object sender, RoutedEventArgs e)
+        {
+            string output = "";
+            foreach (var item in players)
+            {
+                output = output + item.Name + "\n";
+            }
+            MessageBox.Show(output);
         }
     }
 }
