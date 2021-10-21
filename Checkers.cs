@@ -15,6 +15,7 @@ namespace WPF_Game_Checkers
         //default values
         private int xSize = 8, ySize = 8, numOfStoneRows = 2;
         public UIElement playerStone;
+        public UIElement lastPlayerStonePosition;
 
         public int XSize
         {
