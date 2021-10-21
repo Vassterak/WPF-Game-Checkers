@@ -24,9 +24,8 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Border x:Name="canvasBorder" BorderBrush="Black" BorderThickness="2" >
-            <Grid x:Name="gameGrid" x:FieldModifier="public" AllowDrop="True" Drop="gameGrid_Drop" DragOver="gameGrid_DragOver">
-            </Grid>
+        <Border x:Name="canvasBorder" BorderBrush="Black" BorderThickness="2">
+            <Grid x:Name="gameGrid" x:FieldModifier="public" AllowDrop="True" Drop="gameGrid_Drop"></Grid>
         </Border>
 
         <Grid Grid.Column="1">
@@ -43,6 +42,7 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
+            
             <Label Content="Šířka herního pole:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20,0"/>
             <TextBox x:Name="textBoxWidth" VerticalAlignment="Center" Grid.Row="0" Grid.Column="1" Margin="20,0" Text="8"/>
 

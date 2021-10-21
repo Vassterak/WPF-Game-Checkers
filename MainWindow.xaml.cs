@@ -18,16 +18,19 @@ namespace WPF_Game_Checkers
     public partial class MainWindow : Window
     {
         private Checkers damaGame = new Checkers();
-        private List<Ellipse> players = new List<Ellipse>();
+        private bool[,] validPositions;
+
         private int debugVar = 0;
+
         public MainWindow()
         {
             InitializeComponent();
         }
 
-        //Crete grid for the game content.
-        private void CreateGameGrid()
+        private void CreateGameGrid()     //Crete grid for the game content.
         {
+            validPositions = new bool[damaGame.XSize, damaGame.YSize]; //Initialize array
+
             for (int y = 0; y < damaGame.YSize; y++)
             {
                 RowDefinition row = new RowDefinition();
@@ -49,8 +52,9 @@ namespace WPF_Game_Checkers
             {
                 for (int x = 0; x < damaGame.XSize; x++)
                 {
-                    Rectangle rectangle = new Rectangle {Fill = oddRectangle ? Brushes.LightGray : Brushes.SaddleBrown};
+                    validPositions[y, x] = oddRectangle;
 
+                    Rectangle rectangle = new Rectangle {Fill = oddRectangle ? Brushes.LightGray : Brushes.SaddleBrown};
                     rectangle.SetValue(Grid.RowProperty, y);
                     rectangle.SetValue(Grid.ColumnProperty, x);
                     gameGrid.Children.Add(rectangle);
@@ -87,7 +91,7 @@ namespace WPF_Game_Checkers
             gameGrid.Children.Clear();
             gameGrid.RowDefinitions.Clear();
             gameGrid.ColumnDefinitions.Clear();
-            players.Clear();
+            //players.Clear();
         }
 
         private void RenderStones(int numOfStonesRows)
@@ -109,7 +113,7 @@ namespace WPF_Game_Checkers
                             playerStone.Name = $"player1_{x}_{y}";
                             playerStone.Style = (Style)FindResource("playerStyle"); //Apply style with event handler
                             gameGrid.Children.Add(playerStone);
-                            players.Add(playerStone);
+                            //players.Add(playerStone);
                         }
 
                         else //render for player 2 (at bottom)
@@ -126,7 +130,7 @@ namespace WPF_Game_Checkers
                             playerStone.Name = $"player2_{x}_{y}";
                             playerStone.Style = (Style)FindResource("playerStyle"); //Apply style with event handler
                             gameGrid.Children.Add(playerStone);
-                            players.Add(playerStone);
+                           // players.Add(playerStone);
                         }
                     }
 
@@ -151,15 +155,13 @@ namespace WPF_Game_Checkers
                 RenderStones(damaGame.NumOfStoneRows);
             }
 
-            catch (Exception)
+            catch (Exception)   //Message that says: Only enter valid values!
             {
-                //Message that says: Only enter valid values!
                 MessageBox.Show("Zadej pouze platné hodnoty!");
             }
         }
 
-        //Return true only when last plate was false
-        private bool OddChecker(bool oddRectangle, int x)
+        private bool OddChecker(bool oddRectangle, int x)         //Return true only when last plate was false
         {
             oddRectangle = !oddRectangle;
             if (x == damaGame.XSize - 1 && damaGame.XSize % 2 == 0) //only true when x(rows) are even
@@ -182,24 +184,28 @@ namespace WPF_Game_Checkers
 
         private void gameGrid_Drop(object sender, DragEventArgs e)
         {
-            //Point dropPositiom = e.GetPosition(gameGrid);
             var newPosition = (UIElement)e.Source;
-            Grid.SetColumn(damaGame.playerStone, Grid.GetColumn(newPosition));
-            Grid.SetRow(damaGame.playerStone, Grid.GetRow(newPosition));
-        }
 
-        private void gameGrid_DragOver(object sender, DragEventArgs e)
-        {
-
+            if (!validPositions[Grid.GetColumn(newPosition),Grid.GetRow(newPosition)])
+            {
+                Grid.SetColumn(damaGame.playerStone, Grid.GetColumn(newPosition));
+                Grid.SetRow(damaGame.playerStone, Grid.GetRow(newPosition));
+            }
         }
 
         private void ButtonTest_Click(object sender, RoutedEventArgs e)
         {
             string output = "";
-            foreach (var item in players)
+            //foreach (var item in players)
+            //    output = output + item.Name + "\n";
+
+
+            foreach (var item in validPositions)
             {
-                output = output + item.Name + "\n";
+                output = output + item + "\n";
             }
+            output += output.Length.ToString();
+
             MessageBox.Show(output);
         }
     }
