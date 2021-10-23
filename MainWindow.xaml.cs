@@ -47,7 +47,10 @@ namespace WPF_Game_Checkers
             }
 
             if (freeMovementCheckBox.IsChecked == true)
+            {
                 freeMovement = true;
+                MessageBox.Show("Volný pohyb je povolen, nyní nemůžeš vyřazovat proti-hráče hráče."); //Free movement is disabled. Now you are unable to eliminate the adversary.
+            }
             else
                 freeMovement = false;
         }
@@ -227,16 +230,38 @@ namespace WPF_Game_Checkers
 
             if (lastPostion.Name.Substring(0, 5) == "white")
             {
-                if (yNow > yLast)
+                if ((yNow - yLast) == 1)
                     return true;
+
+                else if ((yNow - yLast) == 2)
+                    return CheckKill(lastPostion, currentPosition);
             }
 
             else
             {
-                if (yNow < yLast)
+                if ((yNow - yLast) == -1)
                     return true;
+
+                else if ((yNow - yLast) == -2)
+                    return CheckKill(lastPostion, currentPosition);
             }
 
+            return false;
+        }
+
+        private bool CheckKill(FrameworkElement lastPosition, FrameworkElement currentPosition)
+        {
+            int xVictim = 0, yVictim = 0;
+
+            yVictim = (Grid.GetRow(lastPosition) + Grid.GetRow(currentPosition)) / 2;
+            xVictim = (Grid.GetColumn(lastPosition) + Grid.GetColumn(currentPosition)) / 2;
+
+            if (playersLocation[yVictim, xVictim] != null)
+            {
+                gameGrid.Children.Remove(gameGrid.Children.Cast<UIElement>().Last(value => Grid.GetRow(value) == yVictim && Grid.GetColumn(value) == xVictim));
+                playersLocation[yVictim, xVictim] = null;
+                return true;
+            }
             return false;
         }
 
