@@ -18,7 +18,7 @@ namespace WPF_Game_Checkers
     public partial class MainWindow : Window
     {
         private Checkers damaGame = new Checkers();
-        private bool[,] nonValidPosition;
+        private bool[,] validPosition;
         private Ellipse[,] playersLocation;
 
         private int attempsForMove = 0, moves = 0;
@@ -28,9 +28,10 @@ namespace WPF_Game_Checkers
             InitializeComponent();
         }
 
-        private void CreateGameGrid()     //Crete grid for the game content.
+        private void CreateGameGrid() //Crete grid for the game content.
         {
-            nonValidPosition = new bool[damaGame.XSize, damaGame.YSize]; //Initialize array
+            //Initialize arrays
+            validPosition = new bool[damaGame.XSize, damaGame.YSize]; 
             playersLocation = new Ellipse[damaGame.XSize, damaGame.YSize];
 
             for (int y = 0; y < damaGame.YSize; y++)
@@ -54,7 +55,7 @@ namespace WPF_Game_Checkers
             {
                 for (int x = 0; x < damaGame.XSize; x++)
                 {
-                    nonValidPosition[y, x] = oddRectangle;
+                    validPosition[y, x] = !oddRectangle;
 
                     Rectangle rectangle = new Rectangle { Fill = oddRectangle ? Brushes.LightGray : Brushes.SaddleBrown };
                     rectangle.SetValue(Grid.RowProperty, y);
@@ -93,7 +94,6 @@ namespace WPF_Game_Checkers
             gameGrid.Children.Clear();
             gameGrid.RowDefinitions.Clear();
             gameGrid.ColumnDefinitions.Clear();
-            //players.Clear();
         }
 
         private void RenderStones(int numOfStonesRows)
@@ -116,7 +116,6 @@ namespace WPF_Game_Checkers
                             newPlayerStone.Style = (Style)FindResource("playerStyle"); //Apply style with event handler
 
                             gameGrid.Children.Add(newPlayerStone); //Adding player's stone to be rendered in gameGrid
-                            //playerStone.Add(newPlayerStone); //Adding new stone to logic list array
                             playersLocation[y, x] = newPlayerStone;
                         }
 
@@ -135,7 +134,6 @@ namespace WPF_Game_Checkers
                             newPlayerStone.Style = (Style)FindResource("playerStyle"); //Apply style with event handler
 
                             gameGrid.Children.Add(newPlayerStone); //Adding player's stone to be rendered in gameGrid
-                            //playerStone.Add(newPlayerStone); //Adding new stone to logic list array
                             playersLocation[y, x] = newPlayerStone;
                         }
                     }
@@ -161,13 +159,13 @@ namespace WPF_Game_Checkers
                 RenderStones(damaGame.NumOfStoneRows);
             }
 
-            catch (Exception)   //Message that says: Only enter valid values!
+            catch (Exception)   
             {
-                MessageBox.Show("Zadej pouze platné hodnoty!");
+                MessageBox.Show("Zadej pouze platné hodnoty!"); //Message that says: Only enter valid values!
             }
         }
 
-        private bool OddChecker(bool oddRectangle, int x)         //Return true only when last plate was false
+        private bool OddChecker(bool oddRectangle, int x) //Return true only when last plate was false
         {
             oddRectangle = !oddRectangle;
             if (x == damaGame.XSize - 1 && damaGame.XSize % 2 == 0) //only true when x(rows) are even
@@ -192,34 +190,22 @@ namespace WPF_Game_Checkers
 
         private void gameGrid_Drop(object sender, DragEventArgs e)
         {
-            var newPosition = (UIElement)e.Source;
+            var newPosition = (UIElement)e.Source; //get the element under mouse
 
-            if (!nonValidPosition[Grid.GetColumn(newPosition), Grid.GetRow(newPosition)]) //Checks if the player moved the stone to valid color of checkerboard
+            if (validPosition[Grid.GetColumn(newPosition), Grid.GetRow(newPosition)]) //Checks if the player moved the stone to valid color of checkerboard
             {
-                var element = e.OriginalSource as FrameworkElement; //get the element under mouse
-
                 if (playersLocation[Grid.GetRow(newPosition), Grid.GetColumn(newPosition)] == null)
                 {
-                    if (element.Name == "") //check if the name is empty (that means there is no other stone)
-                    {
-                        playersLocation[Grid.GetRow(damaGame.lastPlayerStonePosition), Grid.GetColumn(damaGame.lastPlayerStonePosition)] = null;
-                        Grid.SetColumn(damaGame.playerStone, Grid.GetColumn(newPosition));
-                        Grid.SetRow(damaGame.playerStone, Grid.GetRow(newPosition));
+                    playersLocation[Grid.GetRow(damaGame.lastPlayerStonePosition), Grid.GetColumn(damaGame.lastPlayerStonePosition)] = null;
+                    Grid.SetColumn(damaGame.playerStone, Grid.GetColumn(newPosition));
+                    Grid.SetRow(damaGame.playerStone, Grid.GetRow(newPosition));
 
-                        //MessageBox.Show(Grid.GetRow(damaGame.lastPlayerStonePosition) + " - " + Grid.GetColumn(damaGame.lastPlayerStonePosition));
-                        playersLocation[Grid.GetRow(newPosition), Grid.GetColumn(newPosition)] = (Ellipse)damaGame.playerStone;
-                    }
+                    playersLocation[Grid.GetRow(newPosition), Grid.GetColumn(newPosition)] = (Ellipse)damaGame.playerStone;
+                    moves++;
+                    debugVariable2.Content = moves.ToString();
                 }
-
-                //if (gameGrid.Children.Cast<Ellipse>() Where Grid.GetColumn(newPosition) && Grid.GetRow(newPosition))
             }
         }
-
-        //private UIElement FindByCell1(Grid g, int row, int col)
-        //{
-        //    var childs = g.Children.Cast<UIElement>();
-        //    return childs.Where(x => Grid.GetRow(x) == row && Grid.GetColumn(x) == col).FirstOrDefault();
-        //}
 
         private void ButtonTest_Click(object sender, RoutedEventArgs e)
         {
