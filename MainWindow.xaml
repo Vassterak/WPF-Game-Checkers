@@ -46,6 +46,7 @@
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         
                         <Label Content="Šířka herního pole:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20,0"/>
@@ -56,6 +57,9 @@
 
                         <Label Content="Počet řad hráčů:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20,0"/>
                         <TextBox x:Name="textBoxNumStoneRows" VerticalAlignment="Center" Grid.Row="2" Grid.Column="1" Margin="20,0" Text="2"/>
+
+                        <Label Content="Povolit volný pohyb:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20,0"/>
+                        <CheckBox x:Name="freeMovementCheckBox" Grid.Row="3" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="False"/>
                     </Grid>
 
                     <Button x:Name="ButtonVykresli" DockPanel.Dock="Bottom" Content="Nová hra" Height="30" Margin="50,0,50,0" Click="ButtonNewGame_Click"/>

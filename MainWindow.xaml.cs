@@ -20,7 +20,7 @@ namespace WPF_Game_Checkers
         private Checkers damaGame = new Checkers();
         private bool[,] validPosition;
         private Ellipse[,] playersLocation;
-
+        private bool freeMovement = false;
         private int attempsForMove = 0, moves = 0;
 
         public MainWindow()
@@ -45,6 +45,11 @@ namespace WPF_Game_Checkers
                 ColumnDefinition colum = new ColumnDefinition();
                 gameGrid.ColumnDefinitions.Add(colum);
             }
+
+            if (freeMovementCheckBox.IsChecked == true)
+                freeMovement = true;
+            else
+                freeMovement = false;
         }
 
         private void RenderCheckeredBackground()
@@ -197,15 +202,18 @@ namespace WPF_Game_Checkers
 
             if (validPosition[Grid.GetColumn(newPosition), Grid.GetRow(newPosition)]) //Checks if the player moved the stone to valid color of checkerboard
             {
-                if (playersLocation[Grid.GetRow(newPosition), Grid.GetColumn(newPosition)] == null && MoveOneWayOnly(damaGame.lastPlayerStonePosition, newPosition)) //check if there is no other player's stone (the destination space is empty)
+                if (playersLocation[Grid.GetRow(newPosition), Grid.GetColumn(newPosition)] == null) //check if there is no other player's stone (the destination space is empty)
                 {
-                    playersLocation[Grid.GetRow(damaGame.lastPlayerStonePosition), Grid.GetColumn(damaGame.lastPlayerStonePosition)] = null;
-                    Grid.SetColumn(damaGame.playerStone, Grid.GetColumn(newPosition));
-                    Grid.SetRow(damaGame.playerStone, Grid.GetRow(newPosition));
+                    if (MoveOneWayOnly(damaGame.lastPlayerStonePosition, newPosition) || freeMovement) //check if player is moving in right direction
+                    {
+                        playersLocation[Grid.GetRow(damaGame.lastPlayerStonePosition), Grid.GetColumn(damaGame.lastPlayerStonePosition)] = null;
+                        Grid.SetColumn(damaGame.playerStone, Grid.GetColumn(newPosition));
+                        Grid.SetRow(damaGame.playerStone, Grid.GetRow(newPosition));
 
-                    playersLocation[Grid.GetRow(newPosition), Grid.GetColumn(newPosition)] = (Ellipse)damaGame.playerStone;
-                    moves++;
-                    debugVariable2.Content = moves.ToString();
+                        playersLocation[Grid.GetRow(newPosition), Grid.GetColumn(newPosition)] = (Ellipse)damaGame.playerStone;
+                        moves++;
+                        debugVariable2.Content = moves.ToString();
+                    }
                 }
             }
         }
