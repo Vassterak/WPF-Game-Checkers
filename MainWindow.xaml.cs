@@ -21,7 +21,7 @@ namespace WPF_Game_Checkers
         private bool[,] nonValidPosition;
         private Ellipse[,] playersLocation;
 
-        private int debugVar = 0;
+        private int attempsForMove = 0, moves = 0;
 
         public MainWindow()
         {
@@ -185,8 +185,8 @@ namespace WPF_Game_Checkers
                 damaGame.lastPlayerStonePosition = element;
                 DragDrop.DoDragDrop(element, element, DragDropEffects.Move);
 
-                debugVar++;
-                debugVariable.Content = debugVar.ToString();
+                attempsForMove++;
+                debugVariable.Content = attempsForMove.ToString();
             }
         }
 
