@@ -137,6 +137,8 @@ namespace WPF_Game_Checkers
                             playersLocation[y, x] = newPlayerStone;
                         }
                     }
+                    else
+                        playersLocation[y, x] = null;
 
                     blackPlane = OddChecker(blackPlane, x); //Set if the checkboard plane is black
                 }
@@ -190,11 +192,12 @@ namespace WPF_Game_Checkers
 
         private void gameGrid_Drop(object sender, DragEventArgs e)
         {
-            var newPosition = (UIElement)e.Source; //get the element under mouse
+            //var newPosition = (UIElement)e.Source; //also working method, but cannot extract the "Name" from object
+            var newPosition = e.OriginalSource as FrameworkElement; //get the element under mouse
 
             if (validPosition[Grid.GetColumn(newPosition), Grid.GetRow(newPosition)]) //Checks if the player moved the stone to valid color of checkerboard
             {
-                if (playersLocation[Grid.GetRow(newPosition), Grid.GetColumn(newPosition)] == null)
+                if (playersLocation[Grid.GetRow(newPosition), Grid.GetColumn(newPosition)] == null && MoveOneWayOnly(damaGame.lastPlayerStonePosition, newPosition)) //check if there is no other player's stone (the destination space is empty)
                 {
                     playersLocation[Grid.GetRow(damaGame.lastPlayerStonePosition), Grid.GetColumn(damaGame.lastPlayerStonePosition)] = null;
                     Grid.SetColumn(damaGame.playerStone, Grid.GetColumn(newPosition));
@@ -207,16 +210,41 @@ namespace WPF_Game_Checkers
             }
         }
 
+        private bool MoveOneWayOnly(FrameworkElement lastPostion, FrameworkElement currentPosition)
+        {
+            int yLast = 0, yNow = 0;
+
+            yLast = Grid.GetRow(lastPostion);
+            yNow = Grid.GetRow(currentPosition);
+
+            if (lastPostion.Name.Substring(0, 5) == "white")
+            {
+                if (yNow > yLast)
+                    return true;
+            }
+
+            else
+            {
+                if (yNow < yLast)
+                    return true;
+            }
+
+            return false;
+        }
+
         private void ButtonTest_Click(object sender, RoutedEventArgs e)
         {
-            //string output = "";
-            //foreach (var item in playerStone)
-            //    output = output + item.Name + "\n";
+            string output = "";
+            foreach (Ellipse item in playersLocation)
+            {
+                if (item != null)
+                {
+                    output += item.Name.ToString();
+                    output += "\n";
+                }
+            }
 
-            //foreach (var item in nonValidPosition)
-            //    output = output + item + "\n";
-
-            //MessageBox.Show(output);
+            MessageBox.Show(output);
         }
     }
 }
