@@ -17,10 +17,11 @@ namespace WPF_Game_Checkers
 {
     public partial class MainWindow : Window
     {
+        private Random rnd = new Random();
         private Checkers damaGame = new Checkers();
         private bool[,] validPosition;
         private Ellipse[,] playersLocation;
-        private bool freeMovement = false;
+        private bool freeMovement = false, whiteMove = false;
         private int attempsForMove = 0, moves = 0;
 
         public MainWindow()
@@ -53,6 +54,14 @@ namespace WPF_Game_Checkers
             }
             else
                 freeMovement = false;
+
+            if (rnd.Next(1, 6) > 3) //Random selection figures colors for opening move
+            {
+                whiteMove = true;
+                player1Label.Background = Brushes.Green;
+            }
+            else
+                player2Label.Background = Brushes.Green;
         }
 
         private void RenderCheckeredBackground()
@@ -97,11 +106,13 @@ namespace WPF_Game_Checkers
             }
         }
 
-        private void ClearGameBoard()
+        private void ResetGame()
         {
             gameGrid.Children.Clear();
             gameGrid.RowDefinitions.Clear();
             gameGrid.ColumnDefinitions.Clear();
+            player1Label.Background = null;
+            player2Label.Background = null;
         }
 
         private void RenderStones(int numOfStonesRows)
@@ -158,7 +169,7 @@ namespace WPF_Game_Checkers
             try
             {
                 //Clear everything
-                ClearGameBoard();
+                ResetGame();
 
                 damaGame.XSize = int.Parse(textBoxWidth.Text);
                 damaGame.YSize = int.Parse(textBoxHeight.Text);
@@ -203,8 +214,20 @@ namespace WPF_Game_Checkers
             //var newPosition = (UIElement)e.Source; //also working method, but cannot extract the "Name" from object
             var newPosition = e.OriginalSource as FrameworkElement; //get the element under mouse
 
-            if (validPosition[Grid.GetColumn(newPosition), Grid.GetRow(newPosition)]) //Checks if the player moved the stone to valid color of checkerboard
+            if (validPosition[Grid.GetColumn(newPosition), Grid.GetRow(newPosition)] && (damaGame.lastPlayerStonePosition.Name.Substring(0, 5) == "black" ^ whiteMove) ) //Checks if the player moved the stone to valid color of checkerboard and if the player is allow to make move
             {
+                whiteMove = !whiteMove;
+                if (whiteMove)
+                {
+                    setPlayerLabelColor(player1Label, true);
+                    setPlayerLabelColor(player2Label, false);
+                }
+                else
+                {
+                    setPlayerLabelColor(player1Label, false);
+                    setPlayerLabelColor(player2Label, true);
+                }
+
                 if (playersLocation[Grid.GetRow(newPosition), Grid.GetColumn(newPosition)] == null) //check if there is no other player's stone (the destination space is empty)
                 {
                     if (MoveOneWayOnly(damaGame.lastPlayerStonePosition, newPosition) || freeMovement) //check if player is moving in right direction
@@ -216,9 +239,20 @@ namespace WPF_Game_Checkers
                         playersLocation[Grid.GetRow(newPosition), Grid.GetColumn(newPosition)] = (Ellipse)damaGame.playerStone;
                         moves++;
                         debugVariable2.Content = moves.ToString();
+
+                        var playersStatus = CheckAdversaryAlive();
+                        if (!playersStatus.Item1)
+                            MessageBox.Show("Hra skončila! Vyhrál hráč s " + (playersStatus.Item2 ? "Bílými figurkami." : "Černými figurkami.")); //Player with white/black figures won.
                     }
                 }
             }
+        }
+        private void setPlayerLabelColor(Label label, bool color)
+        {
+            if (color)
+                label.Background = Brushes.Green;
+            else
+                label.Background = null;
         }
 
         private bool MoveOneWayOnly(FrameworkElement lastPostion, FrameworkElement currentPosition)
@@ -269,6 +303,32 @@ namespace WPF_Game_Checkers
                 return true;
             }
             return false;
+        }
+
+        private Tuple<bool, bool> CheckAdversaryAlive()
+        {
+            bool white = false, black = false;
+
+            foreach (var item in playersLocation)
+            {
+                if (item != null)
+                {
+                    switch (item.Name.Substring(0, 5))
+                    {
+                        case "white":
+                            white = true;
+                            break;
+
+                        case "black":
+                            black = true;
+                            break;
+                    }
+                }
+
+                if (black && white)
+                    return Tuple.Create(true, false);
+            }
+            return Tuple.Create(false, white);
         }
 
         private void ButtonTest_Click(object sender, RoutedEventArgs e)
