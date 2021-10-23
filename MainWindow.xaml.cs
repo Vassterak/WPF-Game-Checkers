@@ -258,8 +258,14 @@ namespace WPF_Game_Checkers
 
             if (playersLocation[yVictim, xVictim] != null)
             {
-                gameGrid.Children.Remove(gameGrid.Children.Cast<UIElement>().Last(value => Grid.GetRow(value) == yVictim && Grid.GetColumn(value) == xVictim));
-                playersLocation[yVictim, xVictim] = null;
+                var victim = gameGrid.Children.Cast<FrameworkElement>().Last(value => Grid.GetRow(value) == yVictim && Grid.GetColumn(value) == xVictim); //Find UIElement by row/culumn values. ".Last" because Ellipses were created after rectangles(checkerboard)
+
+                if (victim.Name.Substring(0, 5) == lastPosition.Name.Substring(0, 5)) //Check if player's stones have different colors. if they are same return false
+                    return false;
+
+                gameGrid.Children.Remove(victim); //remove adversary
+
+                playersLocation[yVictim, xVictim] = null; //freeup space after elimination in gamesGrid
                 return true;
             }
             return false;
