@@ -18,10 +18,9 @@ namespace WPF_Game_Checkers
     class Checkers
     {
         //default values
-        private int xSize = 8, ySize = 8, numOfStoneRows = 2;
+        private int xSize = 8, ySize = 8;
+        public int numOfStoneRows = 2;
         public bool[,] validPosition;
-        public FrameworkElement playerStone;
-        public FrameworkElement lastPlayerStonePosition;
         public Ellipse[,] playersLocation;
         public bool freeMovement = false, whiteMove = false;
         public int attempsForMove = 0, moves = 0;
@@ -72,7 +71,7 @@ namespace WPF_Game_Checkers
                 {
                     validPosition[y, x] = !oddRectangle;
 
-                    Rectangle rectangle = new Rectangle { Fill = oddRectangle ? Brushes.LightGray : Brushes.SaddleBrown };
+                    Rectangle rectangle = new Rectangle { Fill = oddRectangle ? Brushes.LightGray : Brushes.SaddleBrown }; //one is gray other is brown and so on...
                     rectangle.SetValue(Grid.RowProperty, y);
                     rectangle.SetValue(Grid.ColumnProperty, x);
                     gameGrid.Children.Add(rectangle);
@@ -82,7 +81,7 @@ namespace WPF_Game_Checkers
             }
         }
 
-        public void RenderStones(int numOfStonesRows, Grid gameGrid, Style stoneStyle)
+        public void RenderStones(Grid gameGrid, Style stoneStyle)
         {
             bool blackPlane = false, player2render = false;
 
@@ -93,7 +92,7 @@ namespace WPF_Game_Checkers
                     //Render stones only on brown spots
                     if (blackPlane)
                     {
-                        if (y < numOfStonesRows) //render for player 1 (at top)
+                        if (y < numOfStoneRows) //render for player 1 (at top)
                         {
                             Ellipse newPlayerStone = new Ellipse { Fill = Brushes.White, Margin = new Thickness(10) };
                             newPlayerStone.SetValue(Grid.RowProperty, y);
@@ -109,7 +108,7 @@ namespace WPF_Game_Checkers
                         {
                             if (!player2render)
                             {
-                                y = YSize - numOfStonesRows;
+                                y = YSize - numOfStoneRows;
                                 player2render = true;
                             }
 

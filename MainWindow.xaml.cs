@@ -19,46 +19,26 @@ namespace WPF_Game_Checkers
     {
         private Checkers damaGame = new Checkers();
         private Random rnd = new Random();
+        public FrameworkElement lastPlayerStonePosition;
 
         public MainWindow()
         {
             InitializeComponent();
         }
 
-        private void RenderDebugText()
-        {
-            int numOfRects = 0;
-            for (int y = 0; y < damaGame.YSize; y++)
-            {
-                for (int x = 0; x < damaGame.XSize; x++)
-                {
-                    Label laber = new Label
-                    {
-                        HorizontalAlignment = HorizontalAlignment.Center,
-                        VerticalAlignment = VerticalAlignment.Center,
-                        Content = numOfRects.ToString(),
-                        FontSize = 20
-                    };
-
-                    laber.SetValue(Grid.RowProperty, y);
-                    laber.SetValue(Grid.ColumnProperty, x);
-                    gameGrid.Children.Add(laber);
-                }
-            }
-        }
-
-
         private void ButtonNewGame_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                //Clear everything
+                //Reset and clear 
                 damaGame.ResetGame(gameGrid);
                 player1Label.Background = null;
                 player2Label.Background = null;
 
+                //Read new values from user input
                 damaGame.XSize = int.Parse(textBoxWidth.Text);
                 damaGame.YSize = int.Parse(textBoxHeight.Text);
+                damaGame.numOfStoneRows = int.Parse(textBoxNumStoneRows.Text);
 
                 damaGame.CreateGameGrid(gameGrid);
 
@@ -67,24 +47,28 @@ namespace WPF_Game_Checkers
                     damaGame.freeMovement = true;
                     MessageBox.Show("Volný pohyb je povolen, nyní nemůžeš vyřazovat proti-hráče hráče."); //Free movement is disabled. Now you are unable to eliminate the adversary.
                 }
+
                 else
                     damaGame.freeMovement = false;
 
-                if (rnd.Next(1, 6) > 3) //Random selection figures colors for opening move
+                //Random selection figures colors for opening move
+                if (rnd.Next(1, 6) > 3) 
                 {
                     damaGame.whiteMove = true;
                     player1Label.Background = Brushes.Green;
                 }
+
                 else
                     player2Label.Background = Brushes.Green;
 
                 damaGame.RenderCheckeredBackground(gameGrid);
-                damaGame.RenderStones(int.Parse(textBoxNumStoneRows.Text), gameGrid, (Style)FindResource("playerStyle"));
+                damaGame.RenderStones(gameGrid, (Style)FindResource("playerStyle"));
             }
 
             catch (Exception)
             {
-                MessageBox.Show("Zadej pouze platné hodnoty!"); //Message that says: Only enter valid values!
+                //Message that says: Only enter valid values!
+                MessageBox.Show("Zadej pouze platné hodnoty!"); 
             }
         }
 
@@ -92,44 +76,46 @@ namespace WPF_Game_Checkers
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                var element = e.OriginalSource as FrameworkElement; //getting the object from MouseMove Event
-                damaGame.playerStone = element;
-                damaGame.lastPlayerStonePosition = element;
-                DragDrop.DoDragDrop(element, element, DragDropEffects.Move);
+                lastPlayerStonePosition = e.OriginalSource as FrameworkElement; //getting the object from MouseMove Event
+                DragDrop.DoDragDrop(lastPlayerStonePosition, lastPlayerStonePosition, DragDropEffects.Move);
 
+                //show attems in UI
                 damaGame.attempsForMove++;
                 debugVariable.Content = damaGame.attempsForMove.ToString();
             }
         }
 
-        private void gameGrid_Drop(object sender, DragEventArgs e)
+        private void gameGrid_Drop(object sender, DragEventArgs e) //after player removes finger from left click button.
         {
             //var newPosition = (UIElement)e.Source; //also working method, but cannot extract the "Name" from object
             var newPosition = e.OriginalSource as FrameworkElement; //get the element under mouse
 
-            if (damaGame.validPosition[Grid.GetColumn(newPosition), Grid.GetRow(newPosition)] && (damaGame.lastPlayerStonePosition.Name.Substring(0, 5) == "black" ^ damaGame.whiteMove) ) //Checks if the player moved the stone to valid color of checkerboard and if the player is allow to make move
+            if (damaGame.validPosition[Grid.GetColumn(newPosition), Grid.GetRow(newPosition)]) //Checks if the player moved the stone to valid color of checkerboard
             {
-                damaGame.whiteMove = !damaGame.whiteMove;
-                if (damaGame.whiteMove)
+                if (damaGame.playersLocation[Grid.GetRow(newPosition), Grid.GetColumn(newPosition)] == null &&
+                   (lastPlayerStonePosition.Name.Substring(0, 5) == "black" ^ damaGame.whiteMove)) //check if there is no other player's stone (the destination space is empty) and if the right player is on the move
                 {
-                    setPlayerLabelColor(player1Label, true);
-                    setPlayerLabelColor(player2Label, false);
-                }
-                else
-                {
-                    setPlayerLabelColor(player1Label, false);
-                    setPlayerLabelColor(player2Label, true);
-                }
-
-                if (damaGame.playersLocation[Grid.GetRow(newPosition), Grid.GetColumn(newPosition)] == null) //check if there is no other player's stone (the destination space is empty)
-                {
-                    if (damaGame.MoveOneWayOnly(damaGame.lastPlayerStonePosition, newPosition, gameGrid) || damaGame.freeMovement) //check if player is moving in right direction
+                    damaGame.whiteMove = !damaGame.whiteMove;
+                    if (damaGame.whiteMove)
                     {
-                        damaGame.playersLocation[Grid.GetRow(damaGame.lastPlayerStonePosition), Grid.GetColumn(damaGame.lastPlayerStonePosition)] = null;
-                        Grid.SetColumn(damaGame.playerStone, Grid.GetColumn(newPosition));
-                        Grid.SetRow(damaGame.playerStone, Grid.GetRow(newPosition));
+                        setPlayerLabelColor(player1Label, true);
+                        setPlayerLabelColor(player2Label, false);
+                    }
 
-                        damaGame.playersLocation[Grid.GetRow(newPosition), Grid.GetColumn(newPosition)] = (Ellipse)damaGame.playerStone;
+                    else
+                    {
+                        setPlayerLabelColor(player1Label, false);
+                        setPlayerLabelColor(player2Label, true);
+                    }
+
+                    if (damaGame.MoveOneWayOnly(lastPlayerStonePosition, newPosition, gameGrid) || damaGame.freeMovement) //check if player is moving in right direction
+                    {
+                        damaGame.playersLocation[Grid.GetRow(lastPlayerStonePosition), Grid.GetColumn(lastPlayerStonePosition)] = null;
+                        Grid.SetColumn(lastPlayerStonePosition, Grid.GetColumn(newPosition));
+                        Grid.SetRow(lastPlayerStonePosition, Grid.GetRow(newPosition));
+
+                        damaGame.playersLocation[Grid.GetRow(newPosition), Grid.GetColumn(newPosition)] = (Ellipse)lastPlayerStonePosition;
+
                         damaGame.moves++;
                         debugVariable2.Content = damaGame.moves.ToString();
 
@@ -148,7 +134,7 @@ namespace WPF_Game_Checkers
                 label.Background = null;
         }
 
-        private void ButtonTest_Click(object sender, RoutedEventArgs e)
+        private void ButtonTest_Click(object sender, RoutedEventArgs e) //Show all player's stones DEBUG purposes
         {
             string output = "";
             foreach (Ellipse item in damaGame.playersLocation)
