@@ -143,5 +143,11 @@ namespace WPF_Game_Checkers
 
             MessageBox.Show(output);
         }
+
+        private void gameInfoButton_Click(object sender, RoutedEventArgs e)
+        {
+            Settings settings = new Settings();
+            settings.Show();
+        }
     }
 }
