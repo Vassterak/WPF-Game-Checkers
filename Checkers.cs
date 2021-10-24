@@ -1,16 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace WPF_Game_Checkers
@@ -130,7 +122,7 @@ namespace WPF_Game_Checkers
             }
         }
 
-        public bool OddChecker(bool oddRectangle, int x) //Return true only when last plate was false
+        private bool OddChecker(bool oddRectangle, int x) //Return true only when last plate was false
         {
             oddRectangle = !oddRectangle;
             if (x == XSize - 1 && XSize % 2 == 0) //only true when x(rows) are even
@@ -167,7 +159,7 @@ namespace WPF_Game_Checkers
             return false;
         }
 
-        public bool CheckKill(FrameworkElement lastPosition, FrameworkElement currentPosition, Grid gameGrid)
+        private bool CheckKill(FrameworkElement lastPosition, FrameworkElement currentPosition, Grid gameGrid)
         {
             int xVictim = 0, yVictim = 0;
 

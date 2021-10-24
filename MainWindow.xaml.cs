@@ -80,8 +80,7 @@ namespace WPF_Game_Checkers
                 DragDrop.DoDragDrop(lastPlayerStonePosition, lastPlayerStonePosition, DragDropEffects.Move);
 
                 //show attems in UI
-                damaGame.attempsForMove++;
-                debugVariable.Content = damaGame.attempsForMove.ToString();
+                damaGame.attempsForMove++; numOfTriedMoves.Content = damaGame.attempsForMove.ToString();
             }
         }
 
@@ -113,11 +112,9 @@ namespace WPF_Game_Checkers
                         damaGame.playersLocation[Grid.GetRow(lastPlayerStonePosition), Grid.GetColumn(lastPlayerStonePosition)] = null;
                         Grid.SetColumn(lastPlayerStonePosition, Grid.GetColumn(newPosition));
                         Grid.SetRow(lastPlayerStonePosition, Grid.GetRow(newPosition));
-
                         damaGame.playersLocation[Grid.GetRow(newPosition), Grid.GetColumn(newPosition)] = (Ellipse)lastPlayerStonePosition;
 
-                        damaGame.moves++;
-                        debugVariable2.Content = damaGame.moves.ToString();
+                        damaGame.moves++; numOfValidMoves.Content = damaGame.moves.ToString();
 
                         var playersStatus = damaGame.CheckAdversaryAlive();
                         if (!playersStatus.Item1)
@@ -126,15 +123,13 @@ namespace WPF_Game_Checkers
                 }
             }
         }
+
         private void setPlayerLabelColor(Label label, bool color)
         {
-            if (color)
-                label.Background = Brushes.Green;
-            else
-                label.Background = null;
+            label.Background = color ?  Brushes.Green : null;
         }
 
-        private void ButtonTest_Click(object sender, RoutedEventArgs e) //Show all player's stones DEBUG purposes
+        private void debugButton_Click(object sender, RoutedEventArgs e) //Show all player's stones DEBUG purposes
         {
             string output = "";
             foreach (Ellipse item in damaGame.playersLocation)
