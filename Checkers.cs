@@ -14,8 +14,14 @@ namespace WPF_Game_Checkers
         public int numOfStoneRows = 2;
         public bool[,] validPosition;
         public Ellipse[,] playersLocation;
+        Grid gameGrid;
         public bool freeMovement = false, whiteMove = false;
         public int attempsForMove = 0, moves = 0;
+
+        public Checkers(Grid gameGrid)
+        {
+            this.gameGrid = gameGrid;
+        }
 
         public int XSize
         {
@@ -34,7 +40,7 @@ namespace WPF_Game_Checkers
             set { numOfStoneRows = value; }
         }
 
-        public void CreateGameGrid(Grid gameGrid) //Crete grid for the game content.
+        public void CreateGameGrid() //Crete grid for the game content.
         {
             //Initialize arrays
             validPosition = new bool[XSize,YSize];
@@ -53,7 +59,7 @@ namespace WPF_Game_Checkers
             }
         }
 
-        public void RenderCheckeredBackground(Grid gameGrid)
+        public void RenderCheckeredBackground()
         {
             bool oddRectangle = true;
 
@@ -73,7 +79,7 @@ namespace WPF_Game_Checkers
             }
         }
 
-        public void RenderStones(Grid gameGrid, Style stoneStyle)
+        public void RenderStones(Style stoneStyle)
         {
             bool blackPlane = false, player2render = false;
 
@@ -131,7 +137,7 @@ namespace WPF_Game_Checkers
             return oddRectangle;
         }
 
-        public bool MoveOneWayOnly(FrameworkElement lastPostion, FrameworkElement currentPosition, Grid gameGrid)
+        public bool MoveOneWayOnly(FrameworkElement lastPostion, FrameworkElement currentPosition)
         {
             int yLast = 0, yNow = 0;
 
@@ -144,7 +150,7 @@ namespace WPF_Game_Checkers
                     return true;
 
                 else if ((yNow - yLast) == 2)
-                    return CheckKill(lastPostion, currentPosition, gameGrid);
+                    return CheckKill(lastPostion, currentPosition);
             }
 
             else
@@ -153,13 +159,13 @@ namespace WPF_Game_Checkers
                     return true;
 
                 else if ((yNow - yLast) == -2)
-                    return CheckKill(lastPostion, currentPosition, gameGrid);
+                    return CheckKill(lastPostion, currentPosition);
             }
 
             return false;
         }
 
-        private bool CheckKill(FrameworkElement lastPosition, FrameworkElement currentPosition, Grid gameGrid)
+        private bool CheckKill(FrameworkElement lastPosition, FrameworkElement currentPosition)
         {
             int xVictim = 0, yVictim = 0;
 
@@ -207,7 +213,7 @@ namespace WPF_Game_Checkers
             return Tuple.Create(false, white);
         }
 
-        public void ResetGame(Grid gameGrid)
+        public void ResetGame()
         {
             gameGrid.Children.Clear();
             gameGrid.RowDefinitions.Clear();

@@ -17,13 +17,14 @@ namespace WPF_Game_Checkers
 {
     public partial class MainWindow : Window
     {
-        private Checkers damaGame = new Checkers();
+        private Checkers damaGame;
         private Random rnd = new Random();
         public FrameworkElement lastPlayerStonePosition;
 
         public MainWindow()
         {
             InitializeComponent();
+            damaGame = new Checkers(gameGrid);
         }
 
         private void ButtonNewGame_Click(object sender, RoutedEventArgs e)
@@ -31,7 +32,7 @@ namespace WPF_Game_Checkers
             try
             {
                 //Reset and clear 
-                damaGame.ResetGame(gameGrid);
+                damaGame.ResetGame();
                 player1Label.Background = null;
                 player2Label.Background = null;
 
@@ -40,7 +41,7 @@ namespace WPF_Game_Checkers
                 damaGame.YSize = int.Parse(textBoxHeight.Text);
                 damaGame.numOfStoneRows = int.Parse(textBoxNumStoneRows.Text);
 
-                damaGame.CreateGameGrid(gameGrid);
+                damaGame.CreateGameGrid();
 
                 if (freeMovementCheckBox.IsChecked == true)
                 {
@@ -61,8 +62,8 @@ namespace WPF_Game_Checkers
                 else
                     player2Label.Background = Brushes.Green;
 
-                damaGame.RenderCheckeredBackground(gameGrid);
-                damaGame.RenderStones(gameGrid, (Style)FindResource("playerStyle"));
+                damaGame.RenderCheckeredBackground();
+                damaGame.RenderStones((Style)FindResource("playerStyle"));
             }
 
             catch (Exception)
@@ -107,7 +108,7 @@ namespace WPF_Game_Checkers
                         setPlayerLabelColor(player2Label, true);
                     }
 
-                    if (damaGame.MoveOneWayOnly(lastPlayerStonePosition, newPosition, gameGrid) || damaGame.freeMovement) //check if player is moving in right direction
+                    if (damaGame.MoveOneWayOnly(lastPlayerStonePosition, newPosition) || damaGame.freeMovement) //check if player is moving in right direction
                     {
                         damaGame.playersLocation[Grid.GetRow(lastPlayerStonePosition), Grid.GetColumn(lastPlayerStonePosition)] = null;
                         Grid.SetColumn(lastPlayerStonePosition, Grid.GetColumn(newPosition));
@@ -144,7 +145,7 @@ namespace WPF_Game_Checkers
             MessageBox.Show(output);
         }
 
-        private void gameInfoButton_Click(object sender, RoutedEventArgs e)
+        private void gameInfoButton_Click(object sender, RoutedEventArgs e) //Not used. Yet
         {
             Settings settings = new Settings();
             settings.Show();

@@ -92,7 +92,7 @@
                     <Label x:Name="player2Label" Content="Hráč s černými figurkami" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
                     <Button x:Name="debugButton" Content="Show players list (DEBUG)" Height="30" Grid.Row="3" VerticalAlignment="Center" Margin="15,0,15,0" Click="debugButton_Click"/>
-                    <Button x:Name="gameInfoButton" Content="Info a nastavení" Height="30" Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" Margin="15,0,15,0" Click="gameInfoButton_Click"/>
+                    <!--<Button x:Name="gameInfoButton" Content="Info a nastavení" Height="30" Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" Margin="15,0,15,0" Click="gameInfoButton_Click"/>-->
 
                 </Grid>
             </GroupBox>
