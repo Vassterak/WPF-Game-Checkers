@@ -37,9 +37,7 @@ namespace WPF_Game_Checkers
                 player2Label.Background = null;
 
                 //Read new values from user input
-                damaGame.XSize = int.Parse(textBoxWidth.Text);
-                damaGame.YSize = int.Parse(textBoxHeight.Text);
-                damaGame.numOfStoneRows = int.Parse(textBoxNumStoneRows.Text);
+                UserInputControl(int.Parse(textBoxWidth.Text), int.Parse(textBoxHeight.Text), int.Parse(textBoxNumStoneRows.Text));
 
                 damaGame.CreateGameGrid();
 
@@ -71,6 +69,25 @@ namespace WPF_Game_Checkers
                 //Message that says: Only enter valid values!
                 MessageBox.Show("Zadej pouze platné hodnoty!"); 
             }
+        }
+
+        private void UserInputControl(int x, int y, int numberOfFiguresRows)
+        {
+            if (x > 3 && x < 100 && y > 3 && y < 100)
+            {
+                damaGame.XSize = x;
+                damaGame.YSize = y;
+            }
+
+            else
+                throw new Exception("Neplatné číselné hodnoty velikosti hracího pole.");
+
+            if (numberOfFiguresRows + 4 < y && y > 0)
+                damaGame.numOfStoneRows = numberOfFiguresRows;
+
+            else
+                throw new Exception("Neplatný počet řádků");
+
         }
 
         private void Ellipse_MouseMove(object sender, MouseEventArgs e)
