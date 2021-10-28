@@ -64,10 +64,10 @@ namespace WPF_Game_Checkers
                 damaGame.RenderStones((Style)FindResource("playerStyle"));
             }
 
-            catch (Exception)
+            catch (Exception error)
             {
                 //Message that says: Only enter valid values!
-                MessageBox.Show("Zadej pouze platné hodnoty!"); 
+                MessageBox.Show("Zadej pouze platné hodnoty! Chyba: " + error); 
             }
         }
 
@@ -97,7 +97,7 @@ namespace WPF_Game_Checkers
                 lastPlayerStonePosition = e.OriginalSource as FrameworkElement; //getting the object from MouseMove Event
                 DragDrop.DoDragDrop(lastPlayerStonePosition, lastPlayerStonePosition, DragDropEffects.Move);
 
-                //show attems in UI
+                //show attempts in UI
                 damaGame.attempsForMove++; numOfTriedMoves.Content = damaGame.attempsForMove.ToString();
             }
         }
@@ -112,19 +112,6 @@ namespace WPF_Game_Checkers
                 if (damaGame.playersLocation[Grid.GetRow(newPosition), Grid.GetColumn(newPosition)] == null &&
                    (lastPlayerStonePosition.Name.Substring(0, 5) == "black" ^ damaGame.whiteMove)) //check if there is no other player's stone (the destination space is empty) and if the right player is on the move
                 {
-                    damaGame.whiteMove = !damaGame.whiteMove;
-                    if (damaGame.whiteMove)
-                    {
-                        setPlayerLabelColor(player1Label, true);
-                        setPlayerLabelColor(player2Label, false);
-                    }
-
-                    else
-                    {
-                        setPlayerLabelColor(player1Label, false);
-                        setPlayerLabelColor(player2Label, true);
-                    }
-
                     if (damaGame.MoveOneWayOnly(lastPlayerStonePosition, newPosition) || damaGame.freeMovement) //check if player is moving in right direction
                     {
                         damaGame.playersLocation[Grid.GetRow(lastPlayerStonePosition), Grid.GetColumn(lastPlayerStonePosition)] = null;
@@ -133,6 +120,19 @@ namespace WPF_Game_Checkers
                         damaGame.playersLocation[Grid.GetRow(newPosition), Grid.GetColumn(newPosition)] = (Ellipse)lastPlayerStonePosition;
 
                         damaGame.moves++; numOfValidMoves.Content = damaGame.moves.ToString();
+
+                        damaGame.whiteMove = !damaGame.whiteMove;
+                        if (damaGame.whiteMove)
+                        {
+                            setPlayerLabelColor(player1Label, true);
+                            setPlayerLabelColor(player2Label, false);
+                        }
+
+                        else
+                        {
+                            setPlayerLabelColor(player1Label, false);
+                            setPlayerLabelColor(player2Label, true);
+                        }
 
                         var playersStatus = damaGame.CheckAdversaryAlive();
                         if (!playersStatus.Item1)
